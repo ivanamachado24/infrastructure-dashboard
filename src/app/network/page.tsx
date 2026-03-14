@@ -33,8 +33,8 @@ export default function NetworkPage() {
   }, [networkMetrics, loading]);
 
   return (
-    <div className="animate-in fade-in duration-1000 ease-out">
-      <header className="mb-10 md:mb-16">
+    <div className="animate-in fade-in duration-1000 ease-out w-full max-w-full">
+      <header className="mb-8 md:mb-10">
         <h1 className="text-base font-medium text-zinc-100 placeholder-transparent">
           Network
         </h1>
@@ -70,12 +70,12 @@ export default function NetworkPage() {
            {!loading && events.map(event => (
              <div 
                key={event.id} 
-               className={`p-3 rounded-lg border text-sm flex items-center justify-between transition-all duration-300
+               className={`p-3 rounded-lg border text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 transition-all duration-300
                  ${event.type === 'warning' ? 'border-amber-500/20 bg-amber-500/5 text-amber-200' : 'border-zinc-800/50 bg-zinc-900/30 text-zinc-400'}
                `}
              >
-               <span>{event.message}</span>
-               <span className="text-xs opacity-60 ml-4 whitespace-nowrap">{event.time}</span>
+               <span className="break-words">{event.message}</span>
+               <span className="text-xs opacity-60 sm:whitespace-nowrap">{event.time}</span>
              </div>
            ))}
         </div>

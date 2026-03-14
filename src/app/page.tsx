@@ -29,7 +29,7 @@ export default function DashboardOverview() {
            <select
              value={selectedNodeId || ""}
              onChange={(e) => setSelectedNodeId(e.target.value || null)}
-             className="bg-zinc-950 border border-zinc-800 text-zinc-300 text-sm rounded-lg focus:ring-zinc-700 focus:border-zinc-700 block p-2 outline-none transition-colors max-w-[200px]"
+             className="bg-zinc-950 border border-zinc-800 text-zinc-300 text-sm rounded-lg focus:ring-zinc-700 focus:border-zinc-700 block p-2 outline-none transition-colors w-full sm:w-auto sm:max-w-[200px]"
            >
              <option value="">Global Average (All Nodes)</option>
              {nodes.map(node => (
