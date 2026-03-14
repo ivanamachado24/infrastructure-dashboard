@@ -28,12 +28,20 @@ const NodeMonitorContext = createContext<NodeMonitorContextType | undefined>(und
 const generateInitialChartData = (): ChartDataPoint[] => {
   const data = [];
   const now = new Date();
+  let lastCpu = 45;
+  let lastMem = 60;
+
   for (let i = 20; i >= 0; i--) {
     const time = new Date(now.getTime() - i * 2000);
+    
+    // Random walk for initial data to make it look cohesive
+    lastCpu = Math.min(100, Math.max(0, lastCpu + (Math.random() * 20 - 10)));
+    lastMem = Math.min(100, Math.max(0, lastMem + (Math.random() * 10 - 5)));
+
     data.push({
       time: time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      cpu: Math.floor(Math.random() * 30) + 40,
-      memory: Math.floor(Math.random() * 20) + 50,
+      cpu: Math.floor(lastCpu),
+      memory: Math.floor(lastMem),
     });
   }
   return data;
@@ -61,7 +69,12 @@ export const NodeMonitorProvider = ({ children }: { children: ReactNode }) => {
 
     setNodes((currentNodes) => {
       currentNodesState = currentNodes.map((node) => {
-        const metrics = generateMockMetrics();
+        // Pass the previous state to calculate a realistic variation
+        const metrics = generateMockMetrics(
+          node.cpuUsage > 0 ? node.cpuUsage : 50, 
+          node.memoryUsage > 0 ? node.memoryUsage : 50, 
+          node.latency > 0 ? node.latency : 45
+        );
         let newStatus: NodeStatus = 'online';
 
         if (metrics.cpu >= 90) {

@@ -18,10 +18,21 @@ export const initialNodes: NodeData[] = [
   { id: 'node-6', name: 'search-elastic', cpuUsage: 82, memoryUsage: 78, latency: 80, status: 'warning' },
 ];
 
-export const generateMockMetrics = () => {
+export const generateMockMetrics = (currentCpu?: number, currentMem?: number, currentLatency?: number) => {
+  const walk = (val: number, max: number, maxStep: number) => {
+    // Current value plus a random step between -maxStep and +maxStep
+    let newVal = val + (Math.random() * maxStep * 2 - maxStep);
+    
+    // Bounds checking to make it bounce back instead of sticking to edges
+    if (newVal < 0) newVal = Math.abs(newVal); 
+    if (newVal > max) newVal = max - (newVal - max);
+    
+    return Math.floor(newVal);
+  };
+
   return {
-    cpu: Math.floor(Math.random() * 101),
-    memory: Math.floor(Math.random() * 101),
-    latency: Math.floor(Math.random() * 300) + 10,
+    cpu: walk(currentCpu ?? Math.floor(Math.random() * 101), 100, 15), 
+    memory: walk(currentMem ?? Math.floor(Math.random() * 101), 100, 8),
+    latency: walk(currentLatency ?? (Math.floor(Math.random() * 100) + 20), 500, 20),
   };
 };

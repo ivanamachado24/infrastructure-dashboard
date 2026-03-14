@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface AnimatedNumberProps {
   value: number;
@@ -9,11 +9,12 @@ interface AnimatedNumberProps {
 
 export function AnimatedNumber({ value, duration = 1000 }: AnimatedNumberProps) {
   const [displayValue, setDisplayValue] = useState(value);
+  const startValueRef = useRef(value);
 
   useEffect(() => {
     let startTimestamp: number;
     let animationFrameId: number;
-    const startValue = displayValue;
+    const startValue = startValueRef.current;
     const difference = value - startValue;
 
     if (difference === 0) return;
@@ -25,10 +26,13 @@ export function AnimatedNumber({ value, duration = 1000 }: AnimatedNumberProps) 
       // Easing function: easeOutQuart
       const ease = 1 - Math.pow(1 - progress, 4);
       
-      setDisplayValue(Math.round(startValue + difference * ease));
+      const nextValue = Math.round(startValue + difference * ease);
+      setDisplayValue(nextValue);
 
       if (progress < 1) {
         animationFrameId = window.requestAnimationFrame(step);
+      } else {
+        startValueRef.current = value;
       }
     };
 
@@ -36,8 +40,9 @@ export function AnimatedNumber({ value, duration = 1000 }: AnimatedNumberProps) 
 
     return () => {
       window.cancelAnimationFrame(animationFrameId);
+      startValueRef.current = Math.round(startValue + difference * (1 - Math.pow(1 - Math.min((performance.now() - startTimestamp) / duration, 1), 4))) || startValue;
     };
-  }, [value, duration, displayValue]);
+  }, [value, duration]);
 
   return <>{displayValue}</>;
 }
